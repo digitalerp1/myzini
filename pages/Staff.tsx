@@ -8,6 +8,7 @@ import StaffProfileModal from '../components/StaffProfileModal';
 import EditIcon from '../components/icons/EditIcon';
 import DeleteIcon from '../components/icons/DeleteIcon';
 import ViewIcon from '../components/icons/ViewIcon';
+import FullScreenEmbed from '../components/FullScreenEmbed';
 
 const Staff: React.FC = () => {
     const [staffList, setStaffList] = useState<StaffType[]>([]);
@@ -15,6 +16,7 @@ const Staff: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+    const [isEmbedOpen, setIsEmbedOpen] = useState(false);
     const [selectedStaff, setSelectedStaff] = useState<StaffType | null>(null);
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -54,8 +56,7 @@ const Staff: React.FC = () => {
     };
 
     const handleAdd = () => {
-        setSelectedStaff(null);
-        setIsModalOpen(true);
+        setIsEmbedOpen(true);
     };
 
     const handleEdit = (staff: StaffType) => {
@@ -183,6 +184,13 @@ const Staff: React.FC = () => {
                  />
             )}
         </div>
+
+            {isEmbedOpen && (
+                <FullScreenEmbed 
+                    src="https://digitalerp.shop/add_staff.html"
+                    onClose={() => setIsEmbedOpen(false)}
+                />
+            )}
     );
 };
 

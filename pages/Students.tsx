@@ -8,6 +8,7 @@ import StudentProfileModal from '../components/StudentProfileModal';
 import EditIcon from '../components/icons/EditIcon';
 import DeleteIcon from '../components/icons/DeleteIcon';
 import ViewIcon from '../components/icons/ViewIcon';
+import FullScreenEmbed from '../components/FullScreenEmbed';
 
 const Students: React.FC = () => {
     const [students, setStudents] = useState<StudentType[]>([]);
@@ -16,6 +17,7 @@ const Students: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+    const [isEmbedOpen, setIsEmbedOpen] = useState(false);
     const [selectedStudent, setSelectedStudent] = useState<StudentType | null>(null);
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
@@ -76,8 +78,7 @@ const Students: React.FC = () => {
     };
 
     const handleAdd = () => {
-        setSelectedStudent(null);
-        setIsModalOpen(true);
+        setIsEmbedOpen(true);
     };
 
     const handleEdit = (student: StudentType) => {
@@ -234,6 +235,13 @@ const Students: React.FC = () => {
                  />
             )}
         </div>
+
+            {isEmbedOpen && (
+                <FullScreenEmbed 
+                    src="https://digitalerp.shop/add_students.html"
+                    onClose={() => setIsEmbedOpen(false)}
+                />
+            )}
     );
 };
 

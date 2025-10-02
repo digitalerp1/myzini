@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../services/supabase';
-import { Staff as StaffType, SalaryRecord } from '../types';
+import { Staff as StaffType } from '../types';
 import Spinner from '../components/Spinner';
 import StaffModal from '../components/StaffModal';
 import StaffProfileModal from '../components/StaffProfileModal';
@@ -183,7 +183,6 @@ const Staff: React.FC = () => {
                     }}
                  />
             )}
-        </div>
 
             {isEmbedOpen && (
                 <FullScreenEmbed 
@@ -191,6 +190,7 @@ const Staff: React.FC = () => {
                     onClose={() => setIsEmbedOpen(false)}
                 />
             )}
+        </div>
     );
 };
 

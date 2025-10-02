@@ -1,4 +1,4 @@
-```typescript
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../services/supabase';
 import { Student as StudentType, Class } from '../types';
@@ -253,4 +253,4 @@ const Students: React.FC = () => {
 };
 
 export default Students;
-```
+

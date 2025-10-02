@@ -141,8 +141,32 @@ const StaffModal: React.FC<StaffModalProps> = ({ staff, onClose, onSave }) => {
                         <input type="number" name="salary_amount" value={formData.salary_amount} onChange={handleChange} required className="mt-1 input-field"/>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Photo URL</label>
-                        <input type="url" name="photo_url" value={formData.photo_url} onChange={handleChange} placeholder="https://..." className="mt-1 input-field"/>
+                        <label className="block text-sm font-medium text-gray-700">Photo</label>
+                        <div className="mt-1 flex items-center gap-2">
+                            <input
+                                type="url"
+                                name="photo_url"
+                                value={formData.photo_url || ''}
+                                onChange={handleChange}
+                                placeholder="https://... or upload"
+                                className="input-field flex-grow"
+                            />
+                            <input
+                                type="file"
+                                id="photo-upload-staff"
+                                className="hidden"
+                                accept="image/*"
+                                onChange={handlePhotoUpload}
+                                disabled={uploading}
+                            />
+                            <label
+                                htmlFor="photo-upload-staff"
+                                className={`px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 cursor-pointer whitespace-nowrap ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            >
+                                {uploading ? <Spinner size="5" /> : 'Upload'}
+                            </label>
+                        </div>
+                        {uploadError && <p className="mt-1 text-xs text-red-600">{uploadError}</p>}
                     </div>
                     <div className="md:col-span-2 flex items-center">
                         <input type="checkbox" name="is_active" id="is_active" checked={formData.is_active} onChange={handleChange} className="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary"/>

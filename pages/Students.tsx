@@ -142,25 +142,26 @@ const Students: React.FC = () => {
                 </div>
             )}
 
-            <div className="flex flex-wrap gap-4 items-center p-4 bg-gray-50 rounded-lg mb-6">
-                <div className="flex-1 min-w-[200px]">
-                    <label htmlFor="search" className="block text-sm font-medium text-gray-700">Search by Name</label>
+            <div className="flex flex-col md:flex-row gap-4 items-center mb-6">
+                <div className="relative flex-grow w-full md:w-auto">
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </span>
                     <input
                         type="text"
                         id="search"
-                        placeholder="Enter student name..."
+                        placeholder="Search by student name..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                        className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm"
                     />
                 </div>
-                <div className="flex-1 min-w-[200px]">
-                    <label htmlFor="classFilter" className="block text-sm font-medium text-gray-700">Filter by Class</label>
+                <div className="flex-grow w-full md:w-auto md:flex-grow-0">
                     <select
                         id="classFilter"
                         value={selectedClass}
                         onChange={(e) => setSelectedClass(e.target.value)}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                        className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md"
                     >
                         <option value="all">All Classes</option>
                         {classes.map(c => (

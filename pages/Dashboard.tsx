@@ -82,21 +82,19 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
             // Fee calculations
             months.forEach(month => {
                 const status = s[month];
-                 if (status && status !== 'undefined' && status !== 'Dues') {
+                if (!s.class) return; // Skip students without a class
+
+                if (status && status !== 'undefined' && status !== 'Dues') { // Paid
                     totalPaid += fee;
-                    if (!paidByClass[s.class!]) paidByClass[s.class!] = 0;
-                    paidByClass[s.class!] += fee;
+                    paidByClass[s.class] = (paidByClass[s.class] || 0) + fee;
                     if (month === currentMonthName) {
-                        if (!currentMonthPaidByClass[s.class!]) currentMonthPaidByClass[s.class!] = 0;
-                        currentMonthPaidByClass[s.class!] += fee;
+                        currentMonthPaidByClass[s.class] = (currentMonthPaidByClass[s.class] || 0) + fee;
                     }
-                } else if (status === 'Dues') {
+                } else if (status === 'Dues') { // Dues
                     totalDues += fee;
-                    if (!duesByClass[s.class!]) duesByClass[s.class!] = 0;
-                    duesByClass[s.class!] += fee;
+                    duesByClass[s.class] = (duesByClass[s.class] || 0) + fee;
                     if (month === currentMonthName) {
-                        if (!currentMonthDuesByClass[s.class!]) currentMonthDuesByClass[s.class!] = 0;
-                        currentMonthDuesByClass[s.class!] += fee;
+                        currentMonthDuesByClass[s.class] = (currentMonthDuesByClass[s.class] || 0) + fee;
                     }
                 }
             });

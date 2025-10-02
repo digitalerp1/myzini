@@ -18,12 +18,13 @@ const Students: React.FC = () => {
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
     const [selectedStudent, setSelectedStudent] = useState<StudentType | null>(null);
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedClass, setSelectedClass] = useState('all');
 
     const fetchData = useCallback(async () => {
         const { data: studentsData, error: studentsError } = await supabase
             .from('students')
-            .select('*')
-            .order('name', { ascending: true });
+            .select('*');
 
         if (studentsError) {
             setError(studentsError.message);
@@ -106,6 +107,23 @@ const Students: React.FC = () => {
         setSelectedStudent(null);
     };
 
+    const filteredAndSortedStudents = students
+        .filter(student => {
+            const matchesClass = selectedClass === 'all' || student.class === selectedClass;
+            const matchesSearch = student.name.toLowerCase().includes(searchTerm.toLowerCase());
+            return matchesClass && matchesSearch;
+        })
+        .sort((a, b) => {
+            // Handle null, undefined, or non-numeric roll numbers gracefully
+            const rollA = parseInt(String(a.roll_number).replace(/\D/g, '') || '0', 10);
+            const rollB = parseInt(String(b.roll_number).replace(/\D/g, '') || '0', 10);
+            
+            if (rollA === 0 && rollB > 0) return 1; // Put students without roll number at the end
+            if (rollB === 0 && rollA > 0) return -1;
+
+            return rollA - rollB;
+        });
+
     return (
         <div className="bg-white p-8 rounded-xl shadow-lg">
             <div className="flex justify-between items-center mb-6">
@@ -124,11 +142,39 @@ const Students: React.FC = () => {
                 </div>
             )}
 
+            <div className="flex flex-wrap gap-4 items-center p-4 bg-gray-50 rounded-lg mb-6">
+                <div className="flex-1 min-w-[200px]">
+                    <label htmlFor="search" className="block text-sm font-medium text-gray-700">Search by Name</label>
+                    <input
+                        type="text"
+                        id="search"
+                        placeholder="Enter student name..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                    />
+                </div>
+                <div className="flex-1 min-w-[200px]">
+                    <label htmlFor="classFilter" className="block text-sm font-medium text-gray-700">Filter by Class</label>
+                    <select
+                        id="classFilter"
+                        value={selectedClass}
+                        onChange={(e) => setSelectedClass(e.target.value)}
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                    >
+                        <option value="all">All Classes</option>
+                        {classes.map(c => (
+                            <option key={c.id} value={c.class_name}>{c.class_name}</option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+
             {loading ? (
                 <div className="flex justify-center items-center h-96"><Spinner size="12" /></div>
             ) : error ? (
                 <div className="text-center text-red-500">{error}</div>
-            ) : students.length === 0 ? (
+            ) : filteredAndSortedStudents.length === 0 ? (
                 <div className="text-center text-gray-500 h-96 flex flex-col justify-center items-center">
                     <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                     <h2 className="mt-4 text-xl font-semibold">No Students Found</h2>
@@ -147,7 +193,7 @@ const Students: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
-                            {students.map((student) => (
+                            {filteredAndSortedStudents.map((student) => (
                                 <tr key={student.id}>
                                     <td className="py-4 px-4 whitespace-nowrap text-sm font-medium text-gray-900">{student.name}</td>
                                     <td className="py-4 px-4 whitespace-nowrap text-sm text-gray-500">{student.class || 'N/A'}</td>

@@ -1,4 +1,4 @@
-
+```typescript
 import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../services/supabase';
 import { Student as StudentType, Class } from '../types';
@@ -92,7 +92,15 @@ const Students: React.FC = () => {
     };
 
     const handleDelete = async (studentId: number, studentName: string) => {
-        if (window.confirm(`Are you sure you want to delete the record for ${studentName}?`)) {
+        if (window.confirm(`Are you sure you want to delete the record for ${studentName}? This will also delete related fee records.`)) {
+            // First, delete related fee records
+            const { error: feeError } = await supabase.from('fee_records').delete().eq('student_id', studentId);
+            if(feeError){
+                showMessage('error', `Could not delete fee records: ${feeError.message}`);
+                return;
+            }
+
+            // Then, delete the student
             const { error } = await supabase.from('students').delete().eq('id', studentId);
             if (error) {
                 showMessage('error', `Error deleting student: ${error.message}`);
@@ -115,11 +123,10 @@ const Students: React.FC = () => {
             return matchesClass && matchesSearch;
         })
         .sort((a, b) => {
-            // Handle null, undefined, or non-numeric roll numbers gracefully
             const rollA = parseInt(String(a.roll_number).replace(/\D/g, '') || '0', 10);
             const rollB = parseInt(String(b.roll_number).replace(/\D/g, '') || '0', 10);
             
-            if (rollA === 0 && rollB > 0) return 1; // Put students without roll number at the end
+            if (rollA === 0 && rollB > 0) return 1;
             if (rollB === 0 && rollA > 0) return -1;
 
             return rollA - rollB;
@@ -180,7 +187,7 @@ const Students: React.FC = () => {
                 <div className="text-center text-gray-500 h-96 flex flex-col justify-center items-center">
                     <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                     <h2 className="mt-4 text-xl font-semibold">No Students Found</h2>
-                    <p className="mt-2">Get started by adding your first student record.</p>
+                    <p className="mt-2">Your search and filter criteria did not match any students.</p>
                 </div>
             ) : (
                 <div className="overflow-x-auto">
@@ -234,7 +241,6 @@ const Students: React.FC = () => {
                     onClose={closeModal}
                  />
             )}
-        </div>
 
             {isEmbedOpen && (
                 <FullScreenEmbed 
@@ -242,7 +248,9 @@ const Students: React.FC = () => {
                     onClose={() => setIsEmbedOpen(false)}
                 />
             )}
+        </div>
     );
 };
 
 export default Students;
+```
